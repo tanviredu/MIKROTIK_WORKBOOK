@@ -1,0 +1,83 @@
+router 1 ip addressing:
+-----------------------
+[admin@MikroTik] > ip address add address=10.0.0.1/8 interface=ether2
+[admin@MikroTik] > ip address add address=192.168.1.1/24 interface=ether3 
+
+
+
+router2 ip addressing:
+------------------------
+[admin@MikroTik] > ip address add address=10.0.0.2/8 interface=ether2
+[admin@MikroTik] > ip address add address=192.168.2.1/24 interface=ether4
+[admin@MikroTik] > ip address add address=11.0.0.1/8 interface=ether3
+
+
+
+
+
+
+router3 ip addressing:
+-----------------------
+
+[admin@MikroTik] > ip address add address=11.0.0.2/8 interface=ether2
+[admin@MikroTik] > ip address add address=192.168.3.1/24 interface=ether3
+
+
+PC under router1:
+------------------
+PC-2> ip 192.168.1.100/24 192.168.1.1
+Checking for duplicate address...
+PC1 : 192.168.1.100 255.255.255.0 gateway 192.168.1.1
+
+
+Routing Command for Router1:
+----------------------------
+
+[admin@MikroTik] /routing ospf network> add network=10.0.0.0/8 area=backbone 
+[admin@MikroTik] /routing ospf network> add network=192.168.1.0/24 area=backbone
+
+
+
+PC under router2:
+------------------
+PC-4> ip 192.168.2.100/24 192.168.2.1
+Checking for duplicate address...
+PC1 : 192.168.2.100 255.255.255.0 gateway 192.168.2.1
+
+
+Routing Command for Router2:
+----------------------------
+[admin@MikroTik] /routing ospf network> add network=10.0.0.0/8 area=backbone  
+[admin@MikroTik] /routing ospf network> add network=192.168.2.0/24 area=backbone
+[admin@MikroTik] /routing ospf network> add network=11.0.0.0/8 area=backbone 
+
+
+PC under router3:
+------------------
+PC-5> ip 192.168.3.100/24 192.168.3.1
+Checking for duplicate address...
+PC1 : 192.168.3.100 255.255.255.0 gateway 192.168.3.1
+
+Routing Command for Router3:
+----------------------------
+[admin@MikroTik] /routing ospf network> add network=11.0.0.0/8 area=backbone 
+[admin@MikroTik] /routing ospf network> add network=192.168.3.0/24 area=backbone
+
+
+Test:
+-----
+
+from pc-5 to pc-2
+-------------------
+PC-5> ping 192.168.1.100
+
+84 bytes from 192.168.1.100 icmp_seq=1 ttl=61 time=4.505 ms
+
+	
+
+from pc-4 to pc-2
+-------------------
+PC-4> ping 192.168.1.100
+
+84 bytes from 192.168.1.100 icmp_seq=1 ttl=62 time=2.426 ms
+84 bytes from 192.168.1.100 icmp_seq=2 ttl=62 time=3.148 ms
